@@ -6,7 +6,9 @@ import (
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World")
+	body := make([]byte, r.ContentLength)
+	r.Body.Read(body)
+	fmt.Fprintf(w, "%s", body)
 }
 
 func main() {
