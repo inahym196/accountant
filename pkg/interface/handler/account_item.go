@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/inahym196/accountant/usecase"
+	"github.com/inahym196/accountant/pkg/usecase"
 )
 
 type AccountItemHandler struct {

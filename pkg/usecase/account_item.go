@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	domain "github.com/inahym196/accountant/domain/value_object"
+	domain "github.com/inahym196/accountant/pkg/domain/value_object"
 )
 
 type AccountItemDTO struct {

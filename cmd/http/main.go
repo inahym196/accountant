@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/inahym196/accountant/infra"
-	"github.com/inahym196/accountant/infra/sqlite"
-	my_handler "github.com/inahym196/accountant/interface/handler"
-	"github.com/inahym196/accountant/usecase"
+	"github.com/inahym196/accountant/pkg/infra"
+	"github.com/inahym196/accountant/pkg/infra/sqlite"
+	my_handler "github.com/inahym196/accountant/pkg/interface/handler"
+	"github.com/inahym196/accountant/pkg/usecase"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
