@@ -17,15 +17,15 @@ type IAccountItemUseCase interface {
 }
 
 type AccountItemInteractor struct {
-	ai_repo domain.IAccountItemRepository
+	repo domain.IAccountItemRepository
 }
 
 func NewAccountItemInteractor(repo domain.IAccountItemRepository) IAccountItemUseCase {
-	return &AccountItemInteractor{ai_repo: repo}
+	return &AccountItemInteractor{repo}
 }
 
-func (ai_i AccountItemInteractor) FindByTitle(title string) (*AccountItemDTO, error) {
-	ai, err := ai_i.ai_repo.FindByTitle(title)
+func (i AccountItemInteractor) FindByTitle(title string) (*AccountItemDTO, error) {
+	ai, err := i.repo.FindByTitle(title)
 	if err != nil {
 		return nil, err
 	}
@@ -37,10 +37,10 @@ func (ai_i AccountItemInteractor) FindByTitle(title string) (*AccountItemDTO, er
 	}, nil
 
 }
-func (ai_i AccountItemInteractor) Save(ai_dto AccountItemDTO) error {
-	ai, err := domain.NewAccountItem(ai_dto.Title, ai_dto.JapaneseTitle, ai_dto.PeriodType, ai_dto.Element)
+func (i AccountItemInteractor) Save(dto AccountItemDTO) error {
+	ai, err := domain.NewAccountItem(dto.Title, dto.JapaneseTitle, dto.PeriodType, dto.Element)
 	if err != nil {
 		return err
 	}
-	return ai_i.ai_repo.Save(ai)
+	return i.repo.Save(ai)
 }

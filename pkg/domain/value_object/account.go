@@ -20,40 +20,40 @@ const (
 
 type PeriodType struct{ value string }
 
-func (pt PeriodType) String() string {
-	return pt.value
+func (p PeriodType) String() string {
+	return p.value
 }
 
-func NewPeriodType(periodType string) (*PeriodType, error) {
+func NewPeriodType(value string) (*PeriodType, error) {
 	periodTypes := []string{PeriodDuration, PeriodInstant}
-	if !slices.Contains(periodTypes, periodType) {
-		return nil, fmt.Errorf("%s is not periodType", periodType)
+	if !slices.Contains(periodTypes, value) {
+		return nil, fmt.Errorf("%s is not periodType", value)
 	}
-	return &PeriodType{periodType}, nil
+	return &PeriodType{value}, nil
 }
 
 type Balance struct{ value string }
 
-func NewBalance(balance string) (*Balance, error) {
+func NewBalance(value string) (*Balance, error) {
 	balances := []string{BalanceCredit, BalanceDebit}
-	if !slices.Contains(balances, balance) {
-		return nil, fmt.Errorf("%s is not balance", balance)
+	if !slices.Contains(balances, value) {
+		return nil, fmt.Errorf("%s is not balance", value)
 	}
-	return &Balance{balance}, nil
+	return &Balance{value}, nil
 }
 
 type Element struct{ value string }
 
-func (elm Element) String() string {
-	return elm.value
+func (e Element) String() string {
+	return e.value
 }
 
-func NewElement(element string) (*Element, error) {
+func NewElement(value string) (*Element, error) {
 	elements := []string{ElementAssets, ElementLiabilities, ElementEquaty, ElementExpense, ElementIncome}
-	if !slices.Contains(elements, element) {
-		return nil, fmt.Errorf("%s is not element", element)
+	if !slices.Contains(elements, value) {
+		return nil, fmt.Errorf("%s is not element", value)
 	}
-	return &Element{element}, nil
+	return &Element{value}, nil
 }
 
 type AccountItem struct {
@@ -64,7 +64,7 @@ type AccountItem struct {
 }
 
 func NewAccountItem(title string, japanese_title string, period_type string, element string) (*AccountItem, error) {
-	pt, err := NewPeriodType(period_type)
+	period, err := NewPeriodType(period_type)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func NewAccountItem(title string, japanese_title string, period_type string, ele
 	return &AccountItem{
 		Title:         title,
 		JapaneseTitle: japanese_title,
-		PeriodType:    *pt,
+		PeriodType:    *period,
 		Element:       *elm,
 	}, nil
 }
