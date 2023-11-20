@@ -1,11 +1,9 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/inahym196/accountant/pkg/infra"
+	controller "github.com/inahym196/accountant/pkg/interface/controller/http"
 	"github.com/inahym196/accountant/pkg/interface/database"
-	"github.com/inahym196/accountant/pkg/interface/http/controller"
 	"github.com/inahym196/accountant/pkg/usecase"
 )
 
@@ -14,6 +12,5 @@ func main() {
 	repo := database.NewAccountItemRepository(db_conn.Conn)
 	i := usecase.NewAccountItemInteractor(repo)
 	c := controller.NewAccountItemController(i)
-	http.HandleFunc("/", c.Get)
-	http.ListenAndServe("localhost:8080", nil)
+	infra.NewRouter(c).Run()
 }

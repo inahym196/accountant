@@ -7,6 +7,15 @@ import (
 	"github.com/inahym196/accountant/pkg/usecase"
 )
 
+type Reader struct{}
+type Writer struct{}
+
+type HTTPHandler interface {
+	Query() map[string][]string
+	JSON(status string, json []byte)
+	Text(status string, text string)
+}
+
 type AccountItemController struct {
 	u usecase.IAccountItemUseCase
 }
