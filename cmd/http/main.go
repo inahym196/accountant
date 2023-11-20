@@ -13,7 +13,7 @@ func main() {
 	db_conn := infra.NewSQLiteConnector("./test.sqlite3")
 	repo := database.NewAccountItemRepository(db_conn.Conn)
 	i := usecase.NewAccountItemInteractor(repo)
-	handler := controller.NewAccountItemHandler(i)
-	http.HandleFunc("/", handler.Get)
+	c := controller.NewAccountItemController(i)
+	http.HandleFunc("/", c.Get)
 	http.ListenAndServe("localhost:8080", nil)
 }

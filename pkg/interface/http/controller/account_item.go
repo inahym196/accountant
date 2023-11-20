@@ -7,15 +7,15 @@ import (
 	"github.com/inahym196/accountant/pkg/usecase"
 )
 
-type AccountItemHandler struct {
+type AccountItemController struct {
 	u usecase.IAccountItemUseCase
 }
 
-func NewAccountItemHandler(i usecase.IAccountItemUseCase) *AccountItemHandler {
-	return &AccountItemHandler{i}
+func NewAccountItemController(i usecase.IAccountItemUseCase) *AccountItemController {
+	return &AccountItemController{i}
 }
 
-func (h AccountItemHandler) Get(w http.ResponseWriter, r *http.Request) {
+func (h AccountItemController) Get(w http.ResponseWriter, r *http.Request) {
 	if title := r.URL.Query().Get("title"); title != "" {
 		dto, err := h.u.FindByTitle(title)
 		if err != nil {
