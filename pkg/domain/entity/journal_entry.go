@@ -3,12 +3,12 @@ package domain
 import (
 	"time"
 
-	valueObject "github.com/inahym196/accountant/pkg/domain/value_object"
+	vo "github.com/inahym196/accountant/pkg/domain/value_object"
 )
 
 type JournalEntry struct {
-	Id          valueObject.JournalID
+	Id          int
 	Date        time.Time
-	DebitEntry  []valueObject.Account
-	CreditEntry []valueObject.Account
+	DebitEntry  []vo.Account
+	CreditEntry []vo.Account
 }
