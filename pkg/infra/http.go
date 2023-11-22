@@ -29,12 +29,8 @@ func (r reader) Query() map[string][]string {
 	return r.r.URL.Query()
 }
 
-type GetHandler struct {
-	rt router
-}
-
-func (h GetHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	h.rt.c.GET(writer{w}, reader{r})
+func (rt router) Get(w http.ResponseWriter, r *http.Request) {
+	rt.c.GET(writer{w}, reader{r})
 }
 
 type router struct {
@@ -49,6 +45,6 @@ func NewRouter(c *controller.AccountItemController) Router { return router{c} }
 
 func (rt router) Run(addr string) {
 	mux := http.NewServeMux()
-	mux.Handle("/", GetHandler{rt})
+	mux.HandleFunc("/", rt.Get)
 	http.ListenAndServe(addr, mux)
 }
