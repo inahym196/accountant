@@ -43,7 +43,6 @@ type router struct {
 func NewRouter(c *controller.AccountItemController) router { return router{c} }
 
 func (rt router) Run(addr string) {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", rt.AccountItemHandleFunc)
-	http.ListenAndServe(addr, mux)
+	http.HandleFunc("/", rt.AccountItemHandleFunc)
+	http.ListenAndServe(addr, nil)
 }
