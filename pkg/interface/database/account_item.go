@@ -15,7 +15,7 @@ func NewAccountItemRepository(db *sql.DB) domain.IAccountItemRepository {
 	return &AccountItemRepository{DB: db}
 }
 
-func (repo AccountItemRepository) FindByTitle(t string) (*domain.AccountItem, error) {
+func (repo AccountItemRepository) FindByTitle(t string) (domain.AccountItem, error) {
 	var jp_title, period, element string
 	err := repo.DB.QueryRow("select japanese_title, period_type, element from account_item where title = ?", t).Scan(&jp_title, &period, &element)
 	if err != nil {
@@ -31,8 +31,15 @@ func (repo AccountItemRepository) FindByTitle(t string) (*domain.AccountItem, er
 	}
 	return ai, nil
 }
-func (repo AccountItemRepository) Save(ai *domain.AccountItem) error {
-	_, err := repo.DB.Exec("replace into account_item (title,japanese_title,period_type,element) values(?,?,?,?)", ai.Title, ai.JapaneseTitle, ai.PeriodType, ai.Element)
+func (repo AccountItemRepository) Save(ai domain.AccountItem) error {
+	_, err := repo.DB.
+		Exec(
+			"replace into account_item (title,japanese_title,period_type,element) values(?,?,?,?)",
+			ai.GetTitle(),
+			ai.GetJapaneseTitle(),
+			ai.GetPeriodType(),
+			ai.GetElement(),
+		)
 	if err != nil {
 		return err
 	}

@@ -30,10 +30,10 @@ func (i AccountItemInteractor) FindByTitle(title string) (*AccountItemDTO, error
 		return nil, err
 	}
 	return &AccountItemDTO{
-		Title:         ai.Title,
-		JapaneseTitle: ai.JapaneseTitle,
-		PeriodType:    ai.PeriodType.String(),
-		Element:       ai.Element.String(),
+		Title:         ai.GetTitle(),
+		JapaneseTitle: ai.GetJapaneseTitle(),
+		PeriodType:    ai.GetPeriodType().String(),
+		Element:       ai.GetElement().String(),
 	}, nil
 
 }
