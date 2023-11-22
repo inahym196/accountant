@@ -7,6 +7,13 @@ type AccountItem struct {
 	Element       Element
 }
 
+func (ai AccountItem) Equal(other AccountItem) bool {
+	return ai.Title == other.Title &&
+		ai.JapaneseTitle == other.JapaneseTitle &&
+		ai.PeriodType == other.PeriodType &&
+		ai.Element == other.Element
+}
+
 func NewAccountItem(title string, japanese_title string, period_type string, element string) (*AccountItem, error) {
 	period, err := NewPeriodType(period_type)
 	if err != nil {

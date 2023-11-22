@@ -6,7 +6,7 @@ import (
 	vo "github.com/inahym196/accountant/pkg/domain/value_object"
 )
 
-func TestAccountItem(t *testing.T) {
+func TestNewAccountItem(t *testing.T) {
 
 	p, _ := vo.NewPeriodType(vo.PeriodInstant)
 	e, _ := vo.NewElement(vo.ElementAssets)
@@ -30,7 +30,7 @@ func TestAccountItem(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		if ai != tt.want {
+		if !ai.Equal(*tt.want) {
 			t.Errorf("invalid value: %v, want %v", ai, tt.want)
 		}
 	}
