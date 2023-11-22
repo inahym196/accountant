@@ -12,5 +12,5 @@ func main() {
 	repo := database.NewAccountItemRepository(db_conn.Conn)
 	i := usecase.NewAccountItemInteractor(repo)
 	c := controller.NewAccountItemController(i)
-	infra.NewRouter(c).Run()
+	infra.NewRouter(c).Run("localhost:8080")
 }

@@ -1,18 +1,54 @@
 package infra
 
 import (
+	"fmt"
 	"net/http"
 
 	controller "github.com/inahym196/accountant/pkg/interface/controller/http"
 )
 
-type Router struct {
-	c *controller.AccountItemController
+type writer struct {
+	w http.ResponseWriter
 }
 
-func NewRouter(c *controller.AccountItemController) Router { return Router{c} }
+func (w writer) JSON(json []byte) {
+	fmt.Fprintln(w.w, string(json))
+}
+func (w writer) Text(text string) {
+	fmt.Fprintln(w.w, string(text))
+}
+func (w writer) SetStatus(code int) {
+	w.w.WriteHeader(code)
+}
 
-func (r Router) Run() {
-	http.HandleFunc("/", r.c.Get)
-	http.ListenAndServe("localhost:8080", nil)
+type reader struct {
+	r *http.Request
+}
+
+func (r reader) Query() map[string][]string {
+	return r.r.URL.Query()
+}
+
+type GetHandler struct {
+	rt router
+}
+
+func (h GetHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	h.rt.c.GET(writer{w}, reader{r})
+}
+
+type router struct {
+	c   *controller.AccountItemController
+	mux *http.ServeMux
+}
+
+type Router interface {
+	Run(addr string)
+}
+
+func NewRouter(c *controller.AccountItemController) Router { return router{c, http.NewServeMux()} }
+
+func (rt router) Run(addr string) {
+	rt.mux.Handle("/", GetHandler{rt})
+	http.ListenAndServe(addr, rt.mux)
 }
