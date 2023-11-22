@@ -6,15 +6,17 @@ import (
 	vo "github.com/inahym196/accountant/pkg/domain/value_object"
 )
 
+func NewPeriodType(period string) vo.PeriodType {
+	p, _ := vo.NewPeriodType(period)
+	return *p
+}
+func NewElement(element string) vo.Element {
+	e, _ := vo.NewElement(element)
+	return *e
+}
+
 func TestAccountItemEqual(t *testing.T) {
-	p1, _ := vo.NewPeriodType(vo.PeriodInstant)
-	e1, _ := vo.NewElement(vo.ElementAssets)
-	ai := vo.AccountItem{"test", "test", *p1, *e1}
-
-	p2, _ := vo.NewPeriodType(vo.PeriodInstant)
-	p3, _ := vo.NewPeriodType(vo.PeriodDuration)
-	e2, _ := vo.NewElement(vo.ElementAssets)
-
+	ai := vo.AccountItem{"test", "test", NewPeriodType(vo.PeriodInstant), NewElement(vo.ElementAssets)}
 	tests := []struct {
 		name string
 		ai   vo.AccountItem
@@ -22,22 +24,22 @@ func TestAccountItemEqual(t *testing.T) {
 	}{
 		{
 			name: "match 1",
-			ai:   ai,
-			want: true,
-		},
-		{
-			name: "match 2",
-			ai:   vo.AccountItem{"test", "test", *p2, *e2},
+			ai:   vo.AccountItem{"test", "test", NewPeriodType(vo.PeriodInstant), NewElement(vo.ElementAssets)},
 			want: true,
 		},
 		{
 			name: "unmatch 1",
-			ai:   vo.AccountItem{"unmatch", "test", *p2, *e2},
+			ai:   vo.AccountItem{"unmatch", "test", NewPeriodType(vo.PeriodInstant), NewElement(vo.ElementAssets)},
 			want: false,
 		},
 		{
 			name: "unmatch 2",
-			ai:   vo.AccountItem{"test", "test", *p3, *e2},
+			ai:   vo.AccountItem{"test", "test", NewPeriodType(vo.PeriodDuration), NewElement(vo.ElementAssets)},
+			want: false,
+		},
+		{
+			name: "unmatch 3",
+			ai:   vo.AccountItem{"test", "test", NewPeriodType(vo.PeriodDuration), NewElement(vo.ElementEquaty)},
 			want: false,
 		},
 	}
@@ -51,9 +53,6 @@ func TestAccountItemEqual(t *testing.T) {
 }
 
 func TestNewAccountItem(t *testing.T) {
-
-	p, _ := vo.NewPeriodType(vo.PeriodInstant)
-	e, _ := vo.NewElement(vo.ElementAssets)
 	tests := []struct {
 		title          string
 		japanese_title string
@@ -66,7 +65,7 @@ func TestNewAccountItem(t *testing.T) {
 			japanese_title: "test",
 			period_type:    "instant",
 			element:        "assets",
-			want:           &vo.AccountItem{"test", "test", *p, *e},
+			want:           &vo.AccountItem{"test", "test", NewPeriodType(vo.PeriodInstant), NewElement(vo.ElementAssets)},
 		},
 	}
 	for _, tt := range tests {
