@@ -29,20 +29,10 @@ func (r reader) Query() map[string][]string {
 	return r.r.URL.Query()
 }
 
-func (rt router) AccountItemHandleFunc(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		rt.c.GET(writer{w}, reader{r})
-	}
-}
+type Router struct{ ai *accountItemRouter }
 
-type router struct {
-	c *controller.AccountItemController
-}
-
-func NewRouter(c *controller.AccountItemController) router { return router{c} }
-
-func (rt router) Run(addr string) {
-	http.HandleFunc("/", rt.AccountItemHandleFunc)
+func NewRouter(c *controller.AccountItemController) Router { return Router{NewAccountItemRouter(c)} }
+func (rt Router) Run(addr string) {
+	http.HandleFunc("/account_item", rt.ai.HandleFunc)
 	http.ListenAndServe(addr, nil)
 }
