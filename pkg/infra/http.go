@@ -29,10 +29,10 @@ func (r reader) Query() map[string][]string {
 	return r.r.URL.Query()
 }
 
-type Router struct{ ai *accountItemRouter }
+type Server struct{ h http.Handler }
 
-func NewRouter(c *controller.AccountItemController) Router { return Router{NewAccountItemRouter(c)} }
-func (rt Router) Run(addr string) {
-	http.HandleFunc("/account_item", rt.ai.HandleFunc)
+func NewServer(c *controller.AccountItemController) Server { return Server{NewAccountItemHandler(c)} }
+func (s Server) Run(addr string) {
+	http.Handle("/account_item", s.h)
 	http.ListenAndServe(addr, nil)
 }
