@@ -6,8 +6,6 @@ import (
 	"github.com/inahym196/accountant/pkg/usecase"
 )
 
-type HandleFunc func(w Writer, r Reader)
-
 type Reader interface {
 	Query() map[string][]string
 }
