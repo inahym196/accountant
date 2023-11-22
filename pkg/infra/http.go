@@ -37,11 +37,7 @@ type router struct {
 	c *controller.AccountItemController
 }
 
-type Router interface {
-	Run(addr string)
-}
-
-func NewRouter(c *controller.AccountItemController) Router { return router{c} }
+func NewRouter(c *controller.AccountItemController) router { return router{c} }
 
 func (rt router) Run(addr string) {
 	mux := http.NewServeMux()
