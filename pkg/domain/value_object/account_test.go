@@ -6,45 +6,51 @@ import (
 	vo "github.com/inahym196/accountant/pkg/domain/value_object"
 )
 
-func NewPeriodType(period string) vo.PeriodType {
-	p, _ := vo.NewPeriodType(period)
-	return *p
-}
-func NewElement(element string) vo.Element {
-	e, _ := vo.NewElement(element)
-	return *e
+func NewAccountItem(title string, japanese_title string, period string, element string) vo.AccountItem {
+	ai, _ := vo.NewAccountItem(title, japanese_title, period, element)
+	return ai
 }
 
 func TestAccountItemEqual(t *testing.T) {
-	ai := vo.AccountItem{"test", "test", NewPeriodType(vo.PeriodInstant), NewElement(vo.ElementAssets)}
-	tests := []struct {
+	ai := NewAccountItem("test", "test", vo.PeriodInstant, vo.ElementAssets)
+	OKtests := []struct {
 		name string
 		ai   vo.AccountItem
 		want bool
 	}{
 		{
-			name: "match 1",
-			ai:   vo.AccountItem{"test", "test", NewPeriodType(vo.PeriodInstant), NewElement(vo.ElementAssets)},
+			ai:   NewAccountItem("test", "test", vo.PeriodInstant, vo.ElementAssets),
 			want: true,
 		},
+	}
+	for _, tt := range OKtests {
+		t.Run("match", func(t *testing.T) {
+			if actual := ai.Equal(tt.ai); actual != tt.want {
+				t.Errorf("invalid equal result: %v, want %v", actual, tt.want)
+			}
+		})
+	}
+
+	NGtests := []struct {
+		name string
+		ai   vo.AccountItem
+		want bool
+	}{
 		{
-			name: "unmatch 1",
-			ai:   vo.AccountItem{"unmatch", "test", NewPeriodType(vo.PeriodInstant), NewElement(vo.ElementAssets)},
+			ai:   NewAccountItem("unmatch", "test", vo.PeriodInstant, vo.ElementAssets),
 			want: false,
 		},
 		{
-			name: "unmatch 2",
-			ai:   vo.AccountItem{"test", "test", NewPeriodType(vo.PeriodDuration), NewElement(vo.ElementAssets)},
+			ai:   NewAccountItem("test", "test", vo.PeriodDuration, vo.ElementAssets),
 			want: false,
 		},
 		{
-			name: "unmatch 3",
-			ai:   vo.AccountItem{"test", "test", NewPeriodType(vo.PeriodDuration), NewElement(vo.ElementEquaty)},
+			ai:   NewAccountItem("test", "test", vo.PeriodDuration, vo.ElementEquaty),
 			want: false,
 		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for _, tt := range NGtests {
+		t.Run("unmatch", func(t *testing.T) {
 			if actual := ai.Equal(tt.ai); actual != tt.want {
 				t.Errorf("invalid equal result: %v, want %v", actual, tt.want)
 			}
@@ -53,28 +59,59 @@ func TestAccountItemEqual(t *testing.T) {
 }
 
 func TestNewAccountItem(t *testing.T) {
-	tests := []struct {
+	OKtests := []struct {
 		title          string
 		japanese_title string
 		period_type    string
 		element        string
-		want           *vo.AccountItem
+		want           vo.AccountItem
 	}{
 		{
 			title:          "test",
 			japanese_title: "test",
 			period_type:    "instant",
 			element:        "assets",
-			want:           &vo.AccountItem{"test", "test", NewPeriodType(vo.PeriodInstant), NewElement(vo.ElementAssets)},
+			want:           NewAccountItem("test", "test", vo.PeriodInstant, vo.ElementAssets),
 		},
 	}
-	for _, tt := range tests {
-		ai, err := vo.NewAccountItem(tt.title, tt.japanese_title, tt.period_type, tt.element)
-		if err != nil {
-			t.Error(err)
-		}
-		if !ai.Equal(*tt.want) {
-			t.Errorf("invalid value: %v, want %v", ai, tt.want)
-		}
+	for _, tt := range OKtests {
+		t.Run("OK", func(t *testing.T) {
+			ai, err := vo.NewAccountItem(tt.title, tt.japanese_title, tt.period_type, tt.element)
+			if err != nil {
+				t.Error(err)
+			}
+			if !ai.Equal(tt.want) {
+				t.Errorf("invalid value: %v, want %v", ai, tt.want)
+			}
+		})
+	}
+
+	NGtests := []struct {
+		title          string
+		japanese_title string
+		period_type    string
+		element        string
+		want           vo.AccountItem
+	}{
+		{
+			title:          "test",
+			japanese_title: "test",
+			period_type:    "invalid-value",
+			element:        "assets",
+		},
+		{
+			title:          "test",
+			japanese_title: "test",
+			period_type:    "instant",
+			element:        "invalid-value",
+		},
+	}
+	for _, tt := range NGtests {
+		t.Run("NG", func(t *testing.T) {
+			ai, _ := vo.NewAccountItem(tt.title, tt.japanese_title, tt.period_type, tt.element)
+			if ai != nil {
+				t.Errorf("invalid status: %v, want nil", ai)
+			}
+		})
 	}
 }
