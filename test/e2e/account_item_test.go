@@ -1,24 +1,27 @@
-package infra
+package e2e_test
 
 import (
 	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/inahym196/accountant/pkg/infra"
 	controller "github.com/inahym196/accountant/pkg/interface/controller/http"
 	"github.com/inahym196/accountant/pkg/interface/database"
 	"github.com/inahym196/accountant/pkg/usecase"
+	"github.com/inahym196/accountant/pkg/util"
 )
 
 func TestAccountItemHandler(t *testing.T) {
-	db_conn := NewSQLiteConnector("../../test.sqlite3")
+	db_conn := infra.NewSQLiteConnector(filepath.Join(util.ProjectRoot(), "./test.sqlite3"))
 	repo := database.NewAccountItemRepository(db_conn.Conn)
 	i := usecase.NewAccountItemInteractor(repo)
 	c := controller.NewAccountItemController(i)
-	s := NewAccountItemHandler(c)
+	s := infra.NewAccountItemHandler(c)
 	ts := httptest.NewServer(s)
 	defer ts.Close()
 
