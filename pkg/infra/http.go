@@ -38,17 +38,17 @@ func (h GetHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 type router struct {
-	c   *controller.AccountItemController
-	mux *http.ServeMux
+	c *controller.AccountItemController
 }
 
 type Router interface {
 	Run(addr string)
 }
 
-func NewRouter(c *controller.AccountItemController) Router { return router{c, http.NewServeMux()} }
+func NewRouter(c *controller.AccountItemController) Router { return router{c} }
 
 func (rt router) Run(addr string) {
-	rt.mux.Handle("/", GetHandler{rt})
-	http.ListenAndServe(addr, rt.mux)
+	mux := http.NewServeMux()
+	mux.Handle("/", GetHandler{rt})
+	http.ListenAndServe(addr, mux)
 }
