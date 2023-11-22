@@ -25,13 +25,13 @@ func NewAccountItemController(i usecase.IAccountItemUseCase) *AccountItemControl
 	return &AccountItemController{i}
 }
 
-func (h AccountItemController) GET(w Writer, r Reader) {
+func (c AccountItemController) GET(w Writer, r Reader) {
 	title := r.Query()["title"]
 	if len(title) != 1 {
 		w.Text("please specify only one title")
 		return
 	}
-	dto, err := h.u.FindByTitle(title[0])
+	dto, err := c.u.FindByTitle(title[0])
 	if err != nil {
 		w.Text("error")
 		return
