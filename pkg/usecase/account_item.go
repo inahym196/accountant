@@ -1,9 +1,5 @@
 package usecase
 
-import (
-	domain "github.com/inahym196/accountant/pkg/domain/value_object"
-)
-
 type AccountItemDTO struct {
 	Title         string
 	JapaneseTitle string
@@ -17,30 +13,25 @@ type IAccountItemUseCase interface {
 }
 
 type AccountItemInteractor struct {
-	repo domain.IAccountItemRepository
+	repo IAccountItemRepository
 }
 
-func NewAccountItemInteractor(repo domain.IAccountItemRepository) IAccountItemUseCase {
+func NewAccountItemInteractor(repo IAccountItemRepository) IAccountItemUseCase {
 	return &AccountItemInteractor{repo}
 }
 
+type IAccountItemRepository interface {
+	FindByTitle(title string) (*AccountItemDTO, error)
+	Save(ai AccountItemDTO) error
+}
+
 func (i AccountItemInteractor) FindByTitle(title string) (*AccountItemDTO, error) {
-	ai, err := i.repo.FindByTitle(title)
+	dto, err := i.repo.FindByTitle(title)
 	if err != nil {
 		return nil, err
 	}
-	return &AccountItemDTO{
-		Title:         ai.GetTitle(),
-		JapaneseTitle: ai.GetJapaneseTitle(),
-		PeriodType:    ai.GetPeriodType().String(),
-		Element:       ai.GetElement().String(),
-	}, nil
-
+	return dto, nil
 }
 func (i AccountItemInteractor) Save(dto AccountItemDTO) error {
-	ai, err := domain.NewAccountItem(dto.Title, dto.JapaneseTitle, dto.PeriodType, dto.Element)
-	if err != nil {
-		return err
-	}
-	return i.repo.Save(ai)
+	return i.repo.Save(dto)
 }

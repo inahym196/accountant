@@ -45,11 +45,6 @@ func NewAccountItem(title string, japanese_title string, period_type string, ele
 	}, nil
 }
 
-type IAccountItemRepository interface {
-	FindByTitle(title string) (AccountItem, error)
-	Save(ai AccountItem) error
-}
-
 type Amount uint32
 
 type Account struct {

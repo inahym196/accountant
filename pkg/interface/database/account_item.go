@@ -4,20 +4,22 @@ import (
 	"database/sql"
 	"log"
 
-	domain "github.com/inahym196/accountant/pkg/domain/value_object"
+	"github.com/inahym196/accountant/pkg/usecase"
 )
 
 type AccountItemRepository struct {
 	DB *sql.DB
 }
 
-func NewAccountItemRepository(db *sql.DB) domain.IAccountItemRepository {
+func NewAccountItemRepository(db *sql.DB) usecase.IAccountItemRepository {
 	return &AccountItemRepository{DB: db}
 }
 
-func (repo AccountItemRepository) FindByTitle(t string) (domain.AccountItem, error) {
+func (repo AccountItemRepository) FindByTitle(title string) (*usecase.AccountItemDTO, error) {
 	var jp_title, period, element string
-	err := repo.DB.QueryRow("select japanese_title, period_type, element from account_item where title = ?", t).Scan(&jp_title, &period, &element)
+	err := repo.DB.
+		QueryRow("select japanese_title, period_type, element from account_item where title = ?", title).
+		Scan(&jp_title, &period, &element)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, err
@@ -25,20 +27,21 @@ func (repo AccountItemRepository) FindByTitle(t string) (domain.AccountItem, err
 			log.Fatal(err)
 		}
 	}
-	ai, err := domain.NewAccountItem(t, jp_title, period, element)
-	if err != nil {
-		return nil, err
-	}
-	return ai, nil
+	return &usecase.AccountItemDTO{
+		Title:         title,
+		JapaneseTitle: jp_title,
+		PeriodType:    period,
+		Element:       element,
+	}, nil
 }
-func (repo AccountItemRepository) Save(ai domain.AccountItem) error {
+func (repo AccountItemRepository) Save(dto usecase.AccountItemDTO) error {
 	_, err := repo.DB.
 		Exec(
 			"replace into account_item (title,japanese_title,period_type,element) values(?,?,?,?)",
-			ai.GetTitle(),
-			ai.GetJapaneseTitle(),
-			ai.GetPeriodType(),
-			ai.GetElement(),
+			dto.Title,
+			dto.JapaneseTitle,
+			dto.PeriodType,
+			dto.Element,
 		)
 	if err != nil {
 		return err
