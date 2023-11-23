@@ -14,9 +14,9 @@ func (s accountItemHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 type accountItemHandler struct {
-	c *controller.AccountItemController
+	c controller.AccountItemController
 }
 
-func NewAccountItemHandler(c *controller.AccountItemController) *accountItemHandler {
-	return &accountItemHandler{c}
+func NewAccountItemHandler(c controller.AccountItemController) accountItemHandler {
+	return accountItemHandler{c}
 }

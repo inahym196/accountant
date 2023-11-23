@@ -15,15 +15,19 @@ type Writer interface {
 	SetStatus(code int)
 }
 
-type AccountItemController struct {
+type AccountItemController interface {
+	GET(w Writer, r Reader)
+}
+
+type accountItemController struct {
 	u usecase.AccountItemUseCase
 }
 
-func NewAccountItemController(i usecase.AccountItemUseCase) *AccountItemController {
-	return &AccountItemController{i}
+func NewAccountItemController(i usecase.AccountItemUseCase) AccountItemController {
+	return accountItemController{i}
 }
 
-func (c AccountItemController) GET(w Writer, r Reader) {
+func (c accountItemController) GET(w Writer, r Reader) {
 	title := r.Query()["title"]
 	if len(title) != 1 {
 		w.Text("please specify only one title")

@@ -29,10 +29,14 @@ func (r reader) Query() map[string][]string {
 	return r.r.URL.Query()
 }
 
-type Server struct{ h http.Handler }
+type Server interface {
+	Run(addr string)
+}
 
-func NewServer(c *controller.AccountItemController) Server { return Server{NewAccountItemHandler(c)} }
-func (s Server) Run(addr string) {
+type server struct{ h http.Handler }
+
+func NewServer(c controller.AccountItemController) Server { return server{NewAccountItemHandler(c)} }
+func (s server) Run(addr string) {
 	http.Handle("/account_item", s.h)
 	http.ListenAndServe(addr, nil)
 }

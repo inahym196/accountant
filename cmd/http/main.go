@@ -11,8 +11,8 @@ import (
 )
 
 func main() {
-	db_conn := infra.NewSQLiteConnector(filepath.Join(util.ProjectRoot(), "./test.sqlite3"))
-	repo := database.NewAccountItemRepository(db_conn.Conn)
+	db_conn := infra.NewSQLiteConnector(filepath.Join(util.ProjectRoot(), "./test.sqlite3")).GetConn()
+	repo := database.NewAccountItemRepository(db_conn)
 	i := usecase.NewAccountItemInteractor(repo)
 	c := controller.NewAccountItemController(i)
 	infra.NewServer(c).Run("localhost:8080")
