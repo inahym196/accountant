@@ -11,6 +11,7 @@ type AccountItemDTO struct {
 
 type AccountItemUseCase interface {
 	FindByTitle(title string) (*AccountItemDTO, error)
+	GetAll() (*[]AccountItemDTO, error)
 	Save(AccountItemDTO) error
 }
 
@@ -24,6 +25,7 @@ func NewAccountItemInteractor(repo AccountItemRepository) AccountItemUseCase {
 
 type AccountItemRepository interface {
 	FindByTitle(title string) (*domain.AccountItem, error)
+	GetAll() (*[]domain.AccountItem, error)
 	Save(ai domain.AccountItem) error
 }
 
@@ -38,6 +40,24 @@ func (i accountItemInteractor) FindByTitle(title string) (*AccountItemDTO, error
 		PeriodType:    (*ai).GetPeriodType().String(),
 		Element:       (*ai).GetElement().String(),
 	}, nil
+}
+
+func (i accountItemInteractor) GetAll() (*[]AccountItemDTO, error) {
+	ais, err := i.repo.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	var dtos []AccountItemDTO
+	for _, ai := range *ais {
+		dto := AccountItemDTO{
+			Title:         ai.GetTitle(),
+			JapaneseTitle: ai.GetJapaneseTitle(),
+			PeriodType:    ai.GetPeriodType().String(),
+			Element:       ai.GetElement().String(),
+		}
+		dtos = append(dtos, dto)
+	}
+	return &dtos, nil
 }
 
 func (i accountItemInteractor) Save(dto AccountItemDTO) error {

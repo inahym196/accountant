@@ -18,6 +18,7 @@ type Writer interface {
 
 type AccountItemController interface {
 	Get(w Writer, r Reader)
+	GetAll(w Writer, r Reader)
 	Save(w Writer, r Reader)
 }
 
@@ -37,10 +38,22 @@ func (c accountItemController) Get(w Writer, r Reader) {
 	}
 	dto, err := c.u.FindByTitle(title[0])
 	if err != nil {
-		w.Text("error")
+		w.Text(err.Error())
 		return
 	}
 	w.Text(fmt.Sprintf("%s %s %s %s", dto.Title, dto.JapaneseTitle, dto.PeriodType, dto.Element))
+}
+
+func (c accountItemController) GetAll(w Writer, r Reader) {
+	dtos, err := c.u.GetAll()
+	if err != nil {
+		w.Text(err.Error())
+	}
+	var texts string
+	for _, dto := range *dtos {
+		texts += dto.Title + " " + dto.JapaneseTitle + " " + dto.PeriodType + " " + dto.Element + "\n"
+	}
+	w.Text(texts)
 }
 
 func (c accountItemController) Save(w Writer, r Reader) {
