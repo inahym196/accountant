@@ -40,7 +40,7 @@ func NewAccountItem(title string, japanese_title string, period_type string, ele
 	return accountItem{
 		title:         title,
 		japaneseTitle: japanese_title,
-		periodType:    *period,
+		periodType:    period,
 		element:       elm,
 	}, nil
 }

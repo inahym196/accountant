@@ -11,16 +11,20 @@ const (
 	PeriodInstant  = "instant"
 )
 
-type PeriodType struct{ value string }
+type PeriodType interface {
+	String() string
+}
 
-func (p PeriodType) String() string {
+type periodType struct{ value string }
+
+func (p periodType) String() string {
 	return p.value
 }
 
-func NewPeriodType(value string) (*PeriodType, error) {
+func NewPeriodType(value string) (PeriodType, error) {
 	periodTypes := []string{PeriodDuration, PeriodInstant}
 	if !slices.Contains(periodTypes, value) {
 		return nil, fmt.Errorf("%s is not periodType", value)
 	}
-	return &PeriodType{value}, nil
+	return periodType{value}, nil
 }
