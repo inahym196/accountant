@@ -1,5 +1,7 @@
 package usecase
 
+import domain "github.com/inahym196/accountant/pkg/domain/value_object"
+
 type AccountItemDTO struct {
 	Title         string
 	JapaneseTitle string
@@ -33,5 +35,15 @@ func (i accountItemInteractor) FindByTitle(title string) (*AccountItemDTO, error
 	return dto, nil
 }
 func (i accountItemInteractor) Save(dto AccountItemDTO) error {
-	return i.repo.Save(dto)
+	ai, err := domain.NewAccountItem(dto.Title, dto.JapaneseTitle, dto.PeriodType, dto.Element)
+	if err != nil {
+		return err
+	}
+	repo_dto := AccountItemDTO{
+		Title:         ai.GetTitle(),
+		JapaneseTitle: ai.GetJapaneseTitle(),
+		PeriodType:    ai.GetPeriodType().String(),
+		Element:       ai.GetElement().String(),
+	}
+	return i.repo.Save(repo_dto)
 }

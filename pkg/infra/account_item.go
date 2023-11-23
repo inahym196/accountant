@@ -9,7 +9,9 @@ import (
 func (s accountItemHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		s.c.GET(writer{w}, reader{r})
+		s.c.Get(writer{w}, reader{r})
+	case http.MethodPost:
+		s.c.Save(writer{w}, reader{r})
 	}
 }
 
