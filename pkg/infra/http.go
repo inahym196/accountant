@@ -29,6 +29,11 @@ func (r reader) Query() map[string][]string {
 	return r.r.URL.Query()
 }
 
+func (r reader) PostForm() map[string][]string {
+	r.r.ParseForm()
+	return r.r.PostForm
+}
+
 type Server interface {
 	Run(addr string)
 }

@@ -7,6 +7,7 @@ import (
 )
 
 type Reader interface {
+	PostForm() map[string][]string
 	Query() map[string][]string
 }
 type Writer interface {
@@ -17,7 +18,7 @@ type Writer interface {
 
 type AccountItemController interface {
 	Get(w Writer, r Reader)
-	Save(w Writer, r Reader) error
+	Save(w Writer, r Reader)
 }
 
 type accountItemController struct {
@@ -42,12 +43,12 @@ func (c accountItemController) Get(w Writer, r Reader) {
 	w.Text(fmt.Sprintf("%s %s %s %s", dto.Title, dto.JapaneseTitle, dto.PeriodType, dto.Element))
 }
 
-func (c accountItemController) Save(w Writer, r Reader) error {
-	q := r.Query()
-	title, jp_title, period, element := q["title"], q["jp_title"], q["period"], q["element"]
+func (c accountItemController) Save(w Writer, r Reader) {
+	data := r.PostForm()
+	title, jp_title, period, element := data["title"], data["jp_title"], data["period"], data["element"]
 	if len(title) != 1 || len(jp_title) != 1 || len(period) != 1 || len(element) != 1 {
 		w.Text("please specify only one title,jp_title,period,element")
-		return nil
+		return
 	}
 	dto := usecase.AccountItemDTO{
 		Title:         title[0],
@@ -55,5 +56,8 @@ func (c accountItemController) Save(w Writer, r Reader) error {
 		PeriodType:    period[0],
 		Element:       element[0],
 	}
-	return c.u.Save(dto)
+	err := c.u.Save(dto)
+	if err != nil {
+		w.Text(err.Error())
+	}
 }
