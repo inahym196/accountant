@@ -41,7 +41,7 @@ func NewAccountItem(title string, japanese_title string, period_type string, ele
 		title:         title,
 		japaneseTitle: japanese_title,
 		periodType:    *period,
-		element:       *elm,
+		element:       elm,
 	}, nil
 }
 
