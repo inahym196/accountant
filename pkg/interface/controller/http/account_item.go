@@ -16,10 +16,10 @@ type Writer interface {
 }
 
 type AccountItemController struct {
-	u usecase.IAccountItemUseCase
+	u usecase.AccountItemUseCase
 }
 
-func NewAccountItemController(i usecase.IAccountItemUseCase) *AccountItemController {
+func NewAccountItemController(i usecase.AccountItemUseCase) *AccountItemController {
 	return &AccountItemController{i}
 }
 

@@ -7,15 +7,15 @@ import (
 	"github.com/inahym196/accountant/pkg/usecase"
 )
 
-type AccountItemRepository struct {
+type AccountItemDatabase struct {
 	DB *sql.DB
 }
 
-func NewAccountItemRepository(db *sql.DB) usecase.IAccountItemRepository {
-	return &AccountItemRepository{DB: db}
+func NewAccountItemRepository(db *sql.DB) usecase.AccountItemRepository {
+	return &AccountItemDatabase{DB: db}
 }
 
-func (repo AccountItemRepository) FindByTitle(title string) (*usecase.AccountItemDTO, error) {
+func (repo AccountItemDatabase) FindByTitle(title string) (*usecase.AccountItemDTO, error) {
 	var jp_title, period, element string
 	err := repo.DB.
 		QueryRow("select japanese_title, period_type, element from account_item where title = ?", title).
@@ -34,7 +34,7 @@ func (repo AccountItemRepository) FindByTitle(title string) (*usecase.AccountIte
 		Element:       element,
 	}, nil
 }
-func (repo AccountItemRepository) Save(dto usecase.AccountItemDTO) error {
+func (repo AccountItemDatabase) Save(dto usecase.AccountItemDTO) error {
 	_, err := repo.DB.
 		Exec(
 			"replace into account_item (title,japanese_title,period_type,element) values(?,?,?,?)",
