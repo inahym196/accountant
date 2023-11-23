@@ -6,26 +6,23 @@ import (
 	domain "github.com/inahym196/accountant/pkg/domain/value_object"
 )
 
-func TestElement(t *testing.T) {
+func TestPeriodType(t *testing.T) {
 	OKtests := []string{
-		domain.ElementAssets,
-		domain.ElementEquaty,
-		domain.ElementExpense,
-		domain.ElementIncome,
-		domain.ElementLiabilities,
+		domain.PeriodDuration,
+		domain.PeriodInstant,
 	}
 	for _, tt := range OKtests {
-		_, err := domain.NewElement(tt)
+		_, err := domain.NewPeriodType(tt)
 		if err != nil {
 			t.Error(err)
 		}
 	}
 	NGtests := []string{
 		"test",
-		"Assets",
+		"Duration",
 	}
 	for _, tt := range NGtests {
-		_, err := domain.NewElement(tt)
+		_, err := domain.NewPeriodType(tt)
 		if err == nil {
 			t.Error("invalid status")
 		}
