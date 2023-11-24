@@ -38,8 +38,8 @@ func NewServer(c controller.AccountItemController) server {
 func (s server) Run(addr string) {
 	e := echo.New()
 	accountItem := e.Group("/account_item")
-	accountItem.GET("/", s.GetAccountItem)
-	accountItem.POST("/", s.PostAccountItem)
+	accountItem.GET("", s.GetAccountItem)
+	accountItem.POST("", s.PostAccountItem)
 	e.Start(addr)
 }
 

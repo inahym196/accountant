@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 
 	"github.com/inahym196/accountant/pkg/infra"
+	"github.com/inahym196/accountant/pkg/infra/echo"
 	controller "github.com/inahym196/accountant/pkg/interface/controller/http"
 	"github.com/inahym196/accountant/pkg/interface/database"
 	"github.com/inahym196/accountant/pkg/usecase"
@@ -15,5 +16,5 @@ func main() {
 	repo := database.NewAccountItemRepository(db_conn)
 	i := usecase.NewAccountItemInteractor(repo)
 	c := controller.NewAccountItemController(i)
-	infra.NewServer(c).Run("localhost:8080")
+	echo.NewServer(c).Run("localhost:8080")
 }
