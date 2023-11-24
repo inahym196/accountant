@@ -6,20 +6,23 @@ import (
 	"github.com/inahym196/accountant/pkg/usecase"
 )
 
+type Context interface {
+	Writer
+	Reader
+}
+
+type Writer interface {
+	Text(text string)
+}
 type Reader interface {
 	PostForm() map[string][]string
 	Query() map[string][]string
 }
-type Writer interface {
-	JSON(json []byte)
-	Text(text string)
-	SetStatus(code int)
-}
 
 type AccountItemController interface {
-	Get(w Writer, r Reader)
-	GetAll(w Writer, r Reader)
-	Save(w Writer, r Reader)
+	Get(ctx Context)
+	GetAll(ctx Context)
+	Save(ctx Context)
 }
 
 type accountItemController struct {
@@ -30,37 +33,37 @@ func NewAccountItemController(i usecase.AccountItemUseCase) AccountItemControlle
 	return accountItemController{i}
 }
 
-func (c accountItemController) Get(w Writer, r Reader) {
-	title := r.Query()["title"]
+func (c accountItemController) Get(ctx Context) {
+	title := ctx.Query()["title"]
 	if len(title) != 1 {
-		w.Text("please specify only one title")
+		ctx.Text("please specify only one title")
 		return
 	}
 	dto, err := c.u.FindByTitle(title[0])
 	if err != nil {
-		w.Text(err.Error())
+		ctx.Text(err.Error())
 		return
 	}
-	w.Text(fmt.Sprintf("%s %s %s %s", dto.Title, dto.JapaneseTitle, dto.PeriodType, dto.Element))
+	ctx.Text(fmt.Sprintf("%s %s %s %s", dto.Title, dto.JapaneseTitle, dto.PeriodType, dto.Element))
 }
 
-func (c accountItemController) GetAll(w Writer, r Reader) {
+func (c accountItemController) GetAll(ctx Context) {
 	dtos, err := c.u.GetAll()
 	if err != nil {
-		w.Text(err.Error())
+		ctx.Text(err.Error())
 	}
 	var texts string
 	for _, dto := range *dtos {
 		texts += dto.Title + " " + dto.JapaneseTitle + " " + dto.PeriodType + " " + dto.Element + "\n"
 	}
-	w.Text(texts)
+	ctx.Text(texts)
 }
 
-func (c accountItemController) Save(w Writer, r Reader) {
-	data := r.PostForm()
+func (c accountItemController) Save(ctx Context) {
+	data := ctx.PostForm()
 	title, jp_title, period, element := data["title"], data["jp_title"], data["period"], data["element"]
 	if len(title) != 1 || len(jp_title) != 1 || len(period) != 1 || len(element) != 1 {
-		w.Text("please specify only one title,jp_title,period,element")
+		ctx.Text("please specify only one title,jp_title,period,element")
 		return
 	}
 	dto := usecase.AccountItemDTO{
@@ -71,6 +74,6 @@ func (c accountItemController) Save(w Writer, r Reader) {
 	}
 	err := c.u.Save(dto)
 	if err != nil {
-		w.Text(err.Error())
+		ctx.Text(err.Error())
 	}
 }

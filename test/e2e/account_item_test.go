@@ -21,8 +21,8 @@ func TestAccountItemHandler(t *testing.T) {
 	repo := database.NewAccountItemRepository(db_conn)
 	i := usecase.NewAccountItemInteractor(repo)
 	c := controller.NewAccountItemController(i)
-	s := infra.NewAccountItemHandler(c)
-	ts := httptest.NewServer(s)
+	s := infra.NewServer(c)
+	ts := httptest.NewServer(http.HandlerFunc(s.AccountItemHandleFunc))
 	defer ts.Close()
 
 	cli := &http.Client{}

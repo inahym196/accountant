@@ -7,41 +7,41 @@ import (
 	controller "github.com/inahym196/accountant/pkg/interface/controller/http"
 )
 
-type writer struct {
+type context struct {
 	w http.ResponseWriter
-}
-
-func (w writer) JSON(json []byte) {
-	fmt.Fprintln(w.w, string(json))
-}
-func (w writer) Text(text string) {
-	fmt.Fprintln(w.w, string(text))
-}
-func (w writer) SetStatus(code int) {
-	w.w.WriteHeader(code)
-}
-
-type reader struct {
 	r *http.Request
 }
 
-func (r reader) Query() map[string][]string {
-	return r.r.URL.Query()
+func (c context) Text(text string) {
+	c.w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(c.w, string(text))
 }
 
-func (r reader) PostForm() map[string][]string {
-	r.r.ParseForm()
-	return r.r.PostForm
+func (c context) Query() map[string][]string {
+	return c.r.URL.Query()
 }
 
-type Server interface {
-	Run(addr string)
+func (c context) PostForm() map[string][]string {
+	c.r.ParseForm()
+	return c.r.PostForm
 }
 
-type server struct{ h http.Handler }
+type Server struct {
+	c controller.AccountItemController
+}
 
-func NewServer(c controller.AccountItemController) Server { return server{NewAccountItemHandler(c)} }
-func (s server) Run(addr string) {
-	http.Handle("/account_item", s.h)
+func NewServer(c controller.AccountItemController) Server { return Server{c} }
+func (s Server) Run(addr string) {
+	http.HandleFunc("/account_item", s.AccountItemHandleFunc)
 	http.ListenAndServe(addr, nil)
+}
+
+func (s Server) AccountItemHandleFunc(w http.ResponseWriter, r *http.Request) {
+	ctx := context{w, r}
+	switch r.Method {
+	case http.MethodGet:
+		s.c.Get(ctx)
+	case http.MethodPost:
+		s.c.Save(ctx)
+	}
 }
