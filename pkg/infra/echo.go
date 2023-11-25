@@ -28,35 +28,17 @@ func (ctx context) PostForm() map[string][]string {
 }
 
 type server struct {
-	accountItemRouter
+	AccountItemRouter
 }
 
-func NewServer(c controller.AccountItemController) server { return server{NewAccountItemRouter(c)} }
+func NewServer(c controller.AccountItemController) server {
+	return server{NewAccountItemRouter(c)}
+}
 
 func (s server) Run(addr string) {
 	e := echo.New()
 	accountItem := e.Group("/account_item")
-	accountItem.GET("", s.accountItemRouter.Get)
-	accountItem.POST("", s.accountItemRouter.Post)
+	accountItem.GET("", s.AccountItemRouter.Get)
+	accountItem.POST("", s.AccountItemRouter.Post)
 	e.Start(addr)
-}
-
-type accountItemRouter struct {
-	c controller.AccountItemController
-}
-
-func NewAccountItemRouter(c controller.AccountItemController) accountItemRouter {
-	return accountItemRouter{c}
-}
-
-func (a accountItemRouter) Get(c echo.Context) error {
-	ctx := context{c}
-	a.c.Get(ctx)
-	return nil
-}
-
-func (a accountItemRouter) Post(c echo.Context) error {
-	ctx := context{c}
-	a.c.Save(ctx)
-	return nil
 }
