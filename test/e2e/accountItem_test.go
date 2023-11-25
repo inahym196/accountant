@@ -23,12 +23,12 @@ func TestAccountItemHandler(t *testing.T) {
 	repo := database.NewAccountItemRepository(db_conn)
 	i := usecase.NewAccountItemInteractor(repo)
 	c := controller.NewAccountItemController(i)
-	s := infra.NewServer(c)
+	router := infra.NewAccountItemRouter(c)
 	req := httptest.NewRequest(http.MethodGet, "/account_item?title=test", strings.NewReader(""))
 	rec := httptest.NewRecorder()
 
 	// Action
-	s.GetAccountItem(echo.New().NewContext(req, rec))
+	router.Get(echo.New().NewContext(req, rec))
 
 	// Assert
 	if rec.Code != http.StatusOK {
