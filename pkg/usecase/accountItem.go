@@ -1,6 +1,6 @@
 package usecase
 
-import domain "github.com/inahym196/accountant/pkg/domain/value_object"
+import domain "github.com/inahym196/accountant/pkg/domain/valueObject"
 
 type AccountItemDTO struct {
 	Title         string

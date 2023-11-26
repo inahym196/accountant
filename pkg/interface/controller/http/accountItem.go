@@ -29,8 +29,8 @@ type accountItemController struct {
 	u usecase.AccountItemUseCase
 }
 
-func NewAccountItemController(i usecase.AccountItemUseCase) AccountItemController {
-	return accountItemController{i}
+func NewAccountItemController(u usecase.AccountItemUseCase) AccountItemController {
+	return accountItemController{u}
 }
 
 func (c accountItemController) Get(ctx Context) {

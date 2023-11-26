@@ -3,7 +3,7 @@ package domain_test
 import (
 	"testing"
 
-	domain "github.com/inahym196/accountant/pkg/domain/value_object"
+	domain "github.com/inahym196/accountant/pkg/domain/valueObject"
 )
 
 func TestPeriodType(t *testing.T) {

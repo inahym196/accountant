@@ -3,7 +3,7 @@ package domain
 import (
 	"time"
 
-	vo "github.com/inahym196/accountant/pkg/domain/value_object"
+	vo "github.com/inahym196/accountant/pkg/domain/valueObject"
 )
 
 type JournalEntry struct {

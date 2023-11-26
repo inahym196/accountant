@@ -9,23 +9,22 @@ type AccountItem interface {
 }
 
 type accountItem struct {
-	AccountItem
 	title         string
 	japaneseTitle string
 	periodType    PeriodType
 	element       Element
 }
 
-func (ai accountItem) GetTitle() string          { return ai.title }
-func (ai accountItem) GetJapaneseTitle() string  { return ai.japaneseTitle }
-func (ai accountItem) GetPeriodType() PeriodType { return ai.periodType }
-func (ai accountItem) GetElement() Element       { return ai.element }
+func (item accountItem) GetTitle() string          { return item.title }
+func (item accountItem) GetJapaneseTitle() string  { return item.japaneseTitle }
+func (item accountItem) GetPeriodType() PeriodType { return item.periodType }
+func (item accountItem) GetElement() Element       { return item.element }
 
-func (ai accountItem) Equal(other AccountItem) bool {
-	return ai.title == other.GetTitle() &&
-		ai.japaneseTitle == other.GetJapaneseTitle() &&
-		ai.periodType == other.GetPeriodType() &&
-		ai.element == other.GetElement()
+func (item accountItem) Equal(other AccountItem) bool {
+	return item.title == other.GetTitle() &&
+		item.japaneseTitle == other.GetJapaneseTitle() &&
+		item.periodType == other.GetPeriodType() &&
+		item.element == other.GetElement()
 }
 
 func NewAccountItem(title string, japanese_title string, period_type string, element string) (AccountItem, error) {
@@ -45,9 +44,7 @@ func NewAccountItem(title string, japanese_title string, period_type string, ele
 	}, nil
 }
 
-type Amount uint32
-
 type Account struct {
-	AccountItem AccountItem
-	Amount      Amount
+	AccountItem
+	Amount uint32
 }

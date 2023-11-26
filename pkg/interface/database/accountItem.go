@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	domain "github.com/inahym196/accountant/pkg/domain/value_object"
+	domain "github.com/inahym196/accountant/pkg/domain/valueObject"
 	"github.com/inahym196/accountant/pkg/usecase"
 )
 

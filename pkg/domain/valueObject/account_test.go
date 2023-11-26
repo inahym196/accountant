@@ -3,7 +3,7 @@ package domain_test
 import (
 	"testing"
 
-	vo "github.com/inahym196/accountant/pkg/domain/value_object"
+	vo "github.com/inahym196/accountant/pkg/domain/valueObject"
 )
 
 func NewAccountItem(title string, japanese_title string, period string, element string) vo.AccountItem {
