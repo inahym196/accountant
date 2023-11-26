@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/inahym196/accountant/pkg/infra"
-	"github.com/inahym196/accountant/pkg/infra/router"
 	controller "github.com/inahym196/accountant/pkg/interface/controller/http"
 	"github.com/inahym196/accountant/pkg/interface/database"
 	"github.com/inahym196/accountant/pkg/usecase"
@@ -24,12 +23,12 @@ func TestAccountItemHandler(t *testing.T) {
 	repo := database.NewAccountItemRepository(db_conn)
 	i := usecase.NewAccountItemInteractor(repo)
 	c := controller.NewAccountItemController(i)
-	r := router.NewAccountItemRouter(c)
-	req := httptest.NewRequest(http.MethodGet, "/account_item?title=test", strings.NewReader(""))
+	req := httptest.NewRequest(http.MethodGet, "/?title=test", strings.NewReader(""))
 	rec := httptest.NewRecorder()
+	ctx := echo.New().NewContext(req, rec)
 
 	// Action
-	r.Get(router.NewContext(echo.New().NewContext(req, rec)))
+	infra.RouterFunc(c.Get, nil)(ctx)
 
 	// Assert
 	if rec.Code != http.StatusOK {
