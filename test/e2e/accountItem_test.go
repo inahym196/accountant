@@ -16,19 +16,23 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func TestAccountItemHandler(t *testing.T) {
-
-	// Arrange
-	db_conn := infra.NewSQLiteConnector(filepath.Join(util.ProjectRoot(), "./test.sqlite3")).GetConn()
+func setupAccountItem(path string) controller.AccountItemController {
+	db_conn := infra.NewSQLiteConnector(path).GetConn()
 	repo := database.NewAccountItemRepository(db_conn)
 	i := usecase.NewAccountItemInteractor(repo)
-	c := controller.NewAccountItemController(i)
+	return controller.NewAccountItemController(i)
+}
+
+func TestAccountItemController(t *testing.T) {
+
+	// Arrange
+	accountItem := setupAccountItem(filepath.Join(util.ProjectRoot(), "./test.sqlite3"))
 	req := httptest.NewRequest(http.MethodGet, "/?title=test", strings.NewReader(""))
 	rec := httptest.NewRecorder()
 	ctx := echo.New().NewContext(req, rec)
 
 	// Action
-	infra.RouterFunc(c.Get, nil)(ctx)
+	infra.RouterFunc(accountItem.Get, nil)(ctx)
 
 	// Assert
 	if rec.Code != http.StatusOK {
