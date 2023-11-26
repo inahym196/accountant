@@ -10,10 +10,19 @@ import (
 	"github.com/inahym196/accountant/pkg/util"
 )
 
-func main() {
-	db_conn := infra.NewSQLiteConnector(filepath.Join(util.ProjectRoot(), "./test.sqlite3")).GetConn()
+type server interface {
+	Run(addr string)
+}
+
+func newServer(path string) server {
+	db_conn := infra.NewSQLiteConnector(path).GetConn()
 	repo := database.NewAccountItemRepository(db_conn)
 	i := usecase.NewAccountItemInteractor(repo)
 	c := controller.NewAccountItemController(i)
-	infra.NewServer(c).Run("localhost:8080")
+	return infra.NewServer(c)
+}
+
+func main() {
+	server := newServer(filepath.Join(util.ProjectRoot(), "./test.sqlite3"))
+	server.Run("localhost:8080")
 }
