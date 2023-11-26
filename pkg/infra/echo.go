@@ -32,11 +32,15 @@ func RouterFunc(f func(ctx controller.Context), err error) func(e echo.Context) 
 	}
 }
 
+type Server interface {
+	Run(addr string)
+}
+
 type server struct {
 	accountItem controller.AccountItemController
 }
 
-func NewServer(accountItem controller.AccountItemController) server { return server{accountItem} }
+func NewServer(accountItem controller.AccountItemController) Server { return server{accountItem} }
 
 func (s server) Run(addr string) {
 	e := echo.New()

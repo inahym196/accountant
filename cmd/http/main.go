@@ -10,11 +10,7 @@ import (
 	"github.com/inahym196/accountant/pkg/util"
 )
 
-type server interface {
-	Run(addr string)
-}
-
-func newServer(path string) server {
+func newServer(path string) infra.Server {
 	db_conn := infra.NewSQLiteConnector(path).GetConn()
 	repo := database.NewAccountItemRepository(db_conn)
 	i := usecase.NewAccountItemInteractor(repo)
