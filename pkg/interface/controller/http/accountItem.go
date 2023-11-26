@@ -17,6 +17,7 @@ type Writer interface {
 type Reader interface {
 	PostForm() map[string][]string
 	Query() map[string][]string
+	PathParam() map[string]string
 }
 
 type AccountItemController interface {
@@ -34,12 +35,12 @@ func NewAccountItemController(u usecase.AccountItemUseCase) AccountItemControlle
 }
 
 func (c accountItemController) Get(ctx Context) {
-	title := ctx.Query()["title"]
-	if len(title) != 1 {
+	title := ctx.PathParam()["title"]
+	if title == "" {
 		ctx.Text("please specify only one title")
 		return
 	}
-	dto, err := c.u.FindByTitle(title[0])
+	dto, err := c.u.FindByTitle(title)
 	if err != nil {
 		ctx.Text(err.Error())
 		return
