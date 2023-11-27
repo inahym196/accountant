@@ -1,46 +1,77 @@
 package domain
 
-type AccountItem interface {
-	Equal(other AccountItem) bool
-	GetTitle() string
-	GetJapaneseTitle() string
-	GetPeriodType() PeriodType
-	GetElement() Element
+import (
+	"fmt"
+
+	"golang.org/x/exp/slices"
+)
+
+const (
+	SubjectBS     = "貸借対照表"
+	SubjectCF     = "損益計算書"
+	BalanceDebit  = "debit"
+	BalanceCredit = "credit"
+)
+
+type subject struct{ value string }
+
+func NewSubject(value string) (*subject, error) {
+	subjects := []string{SubjectBS, SubjectCF}
+	if !slices.Contains(subjects, value) {
+		return nil, fmt.Errorf("%s is not subject", value)
+	}
+	return &subject{value}, nil
 }
 
-type accountItem struct {
-	title         string
-	japaneseTitle string
-	periodType    PeriodType
-	element       Element
+func (s subject) String() string { return s.value }
+
+type balance struct{ value string }
+
+func NewBalance(value string) (*balance, error) {
+	balances := []string{BalanceDebit, BalanceCredit}
+	if !slices.Contains(balances, value) {
+		return nil, fmt.Errorf("%s is not balance", value)
+	}
+	return &balance{value}, nil
 }
 
-func (item accountItem) GetTitle() string          { return item.title }
-func (item accountItem) GetJapaneseTitle() string  { return item.japaneseTitle }
-func (item accountItem) GetPeriodType() PeriodType { return item.periodType }
-func (item accountItem) GetElement() Element       { return item.element }
+func (b balance) String() string { return b.value }
 
-func (item accountItem) Equal(other AccountItem) bool {
-	return item.title == other.GetTitle() &&
-		item.japaneseTitle == other.GetJapaneseTitle() &&
-		item.periodType == other.GetPeriodType() &&
-		item.element == other.GetElement()
+type AccountItem struct {
+	subject
+	name   string
+	jpname string
+	periodType
+	balance
 }
 
-func NewAccountItem(title string, japanese_title string, period_type string, element string) (AccountItem, error) {
+func (item AccountItem) GetSubject() subject       { return item.subject }
+func (item AccountItem) GetName() string           { return item.name }
+func (item AccountItem) GetJPName() string         { return item.jpname }
+func (item AccountItem) GetPeriodType() periodType { return item.periodType }
+func (item AccountItem) GetBalance() balance       { return item.balance }
+
+func NewAccountItem(subject string, name string, jpname string, period_type string, balance string) (*AccountItem, error) {
+	subj, err := NewSubject(subject)
+	if err != nil {
+		return nil, err
+	}
+
 	period, err := NewPeriodType(period_type)
 	if err != nil {
 		return nil, err
 	}
-	elm, err := NewElement(element)
+
+	b, err := NewBalance(balance)
 	if err != nil {
 		return nil, err
 	}
-	return accountItem{
-		title:         title,
-		japaneseTitle: japanese_title,
-		periodType:    period,
-		element:       elm,
+	return &AccountItem{
+		subject:    *subj,
+		name:       name,
+		jpname:     jpname,
+		periodType: *period,
+		balance:    *b,
 	}, nil
 }
 

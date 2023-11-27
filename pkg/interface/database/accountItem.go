@@ -16,11 +16,11 @@ func NewAccountItemRepository(db *sql.DB) usecase.AccountItemRepository {
 	return &accountItemDatabase{DB: db}
 }
 
-func (repo accountItemDatabase) FindByTitle(title string) (*domain.AccountItem, error) {
-	var jp_title, period, element string
+func (repo accountItemDatabase) FindByTitle(subject string, name string) (*domain.AccountItem, error) {
+	var jpname, period, balance string
 	err := repo.DB.
-		QueryRow("select japanese_title, period_type, element from account_item where title = ?", title).
-		Scan(&jp_title, &period, &element)
+		QueryRow("select jpname, periodtype, balance from accountItem where subject = ? and name = ? ", subject, name).
+		Scan(&jpname, &period, &balance)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, err
@@ -28,42 +28,43 @@ func (repo accountItemDatabase) FindByTitle(title string) (*domain.AccountItem, 
 			log.Fatal(err)
 		}
 	}
-	ai, err := domain.NewAccountItem(title, jp_title, period, element)
+	ai, err := domain.NewAccountItem(subject, name, jpname, period, balance)
 	if err != nil {
 		return nil, err
 	}
-	return &ai, nil
+	return ai, nil
 }
 
-func (repo accountItemDatabase) GetAll() (*[]domain.AccountItem, error) {
-	rows, err := repo.DB.Query("select title, japanese_title, period_type, element from account_item")
+func (repo accountItemDatabase) GetAll() ([]*domain.AccountItem, error) {
+	rows, err := repo.DB.Query("select subject, name, jpname, periodtype, balance from accountItem")
 	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
-	var ais []domain.AccountItem
+	var ais []*domain.AccountItem
 	for rows.Next() {
-		var title, jp_title, period, element string
-		if err := rows.Scan(&title, &jp_title, &period, &element); err != nil {
+		var subject, name, jpname, period, balance string
+		if err := rows.Scan(&subject, &name, &jpname, &period, &balance); err != nil {
 			return nil, err
 		}
-		ai, err := domain.NewAccountItem(title, jp_title, period, element)
+		ai, err := domain.NewAccountItem(subject, name, jpname, period, balance)
 		if err != nil {
 			return nil, err
 		}
 		ais = append(ais, ai)
 	}
-	return &ais, err
+	return ais, err
 }
 
-func (repo accountItemDatabase) Save(ai domain.AccountItem) error {
+func (repo accountItemDatabase) Save(ai *domain.AccountItem) error {
 	_, err := repo.DB.
 		Exec(
-			"replace into account_item (title,japanese_title,period_type,element) values(?,?,?,?)",
-			ai.GetTitle(),
-			ai.GetJapaneseTitle(),
+			"replace into accountItem (subject, name, jpname, periodtype, balance) values(?,?,?,?,?)",
+			ai.GetSubject().String(),
+			ai.GetName(),
+			ai.GetJPName(),
 			ai.GetPeriodType().String(),
-			ai.GetElement().String(),
+			ai.GetBalance().String(),
 		)
 	if err != nil {
 		return err

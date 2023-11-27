@@ -35,17 +35,18 @@ func NewAccountItemController(u usecase.AccountItemUseCase) AccountItemControlle
 }
 
 func (c accountItemController) Get(ctx Context) {
-	title := ctx.PathParam()["title"]
-	if title == "" {
-		ctx.Text("please specify only one title")
+	subject, name := ctx.PathParam()["subject"], ctx.PathParam()["name"]
+
+	if name == "" || subject == "" {
+		ctx.Text("please specify only one name, and subject")
 		return
 	}
-	dto, err := c.u.FindByTitle(title)
+	dto, err := c.u.FindByTitle(subject, name)
 	if err != nil {
 		ctx.Text(err.Error())
 		return
 	}
-	ctx.Text(fmt.Sprintf("%s %s %s %s", dto.Title, dto.JapaneseTitle, dto.PeriodType, dto.Element))
+	ctx.Text(fmt.Sprintf("%s %s %s %s %s", dto.Subject, dto.Name, dto.JPName, dto.PeriodType, dto.Balance))
 }
 
 func (c accountItemController) GetAll(ctx Context) {
@@ -54,24 +55,25 @@ func (c accountItemController) GetAll(ctx Context) {
 		ctx.Text(err.Error())
 	}
 	var texts string
-	for _, dto := range *dtos {
-		texts += dto.Title + " " + dto.JapaneseTitle + " " + dto.PeriodType + " " + dto.Element + "\n"
+	for _, dto := range dtos {
+		texts += dto.Subject + " " + dto.Name + " " + dto.JPName + " " + dto.PeriodType + " " + dto.Balance + "\n"
 	}
 	ctx.Text(texts)
 }
 
 func (c accountItemController) Save(ctx Context) {
 	data := ctx.PostForm()
-	title, jp_title, period, element := data["title"], data["jp_title"], data["period"], data["element"]
-	if len(title) != 1 || len(jp_title) != 1 || len(period) != 1 || len(element) != 1 {
-		ctx.Text("please specify only one title,jp_title,period,element")
+	subject, name, jpname, period, balance := data["subject"], data["name"], data["jpname"], data["period"], data["balance"]
+	if len(subject) != 1 || len(name) != 1 || len(jpname) != 1 || len(period) != 1 || len(balance) != 1 {
+		ctx.Text("please specify only one subject,name,jpname,period,balance")
 		return
 	}
 	dto := usecase.AccountItemDTO{
-		Title:         title[0],
-		JapaneseTitle: jp_title[0],
-		PeriodType:    period[0],
-		Element:       element[0],
+		Subject:    subject[0],
+		Name:       name[0],
+		JPName:     jpname[0],
+		PeriodType: period[0],
+		Balance:    balance[0],
 	}
 	err := c.u.Save(dto)
 	if err != nil {

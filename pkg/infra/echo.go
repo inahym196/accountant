@@ -55,7 +55,7 @@ func (s server) Run(addr string) {
 	e := echo.New()
 	accountItem := e.Group("/AccountItems")
 	accountItem.GET("", RouterFunc(s.accountItem.GetAll, nil))
-	accountItem.GET("/:title", RouterFunc(s.accountItem.Get, nil))
+	accountItem.GET("/:subject/:name", RouterFunc(s.accountItem.Get, nil))
 	accountItem.POST("", RouterFunc(s.accountItem.Save, nil))
 	e.Start(addr)
 }
