@@ -61,6 +61,6 @@ func (s server) Run(addr string) {
 	accountItems := api.Group("/accountitems")
 	accountItems.GET("", RouterFunc(s.accountItem.GetAll, nil))
 	accountItems.GET("/:subject/:name", RouterFunc(s.accountItem.Get, nil))
-	accountItems.POST("", RouterFunc(s.accountItem.Save, nil))
+	//accountItems.POST("", RouterFunc(s.accountItem.Save, nil))
 	e.Start(addr)
 }
