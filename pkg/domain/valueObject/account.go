@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	SubjectBS     = "貸借対照表"
-	SubjectCF     = "損益計算書"
+	SubjectBS     = "bs"
+	SubjectPL     = "pl"
 	BalanceDebit  = "debit"
 	BalanceCredit = "credit"
 )
@@ -16,7 +16,7 @@ const (
 type subject struct{ value string }
 
 func NewSubject(value string) (*subject, error) {
-	subjects := []string{SubjectBS, SubjectCF}
+	subjects := []string{SubjectBS, SubjectPL}
 	if !slices.Contains(subjects, value) {
 		return nil, fmt.Errorf("%s is not subject", value)
 	}
