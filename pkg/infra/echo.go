@@ -57,9 +57,10 @@ func NewServer(accountItem controller.AccountItemController) Server { return ser
 
 func (s server) Run(addr string) {
 	e := echo.New()
-	accountItem := e.Group("/AccountItems")
-	accountItem.GET("", RouterFunc(s.accountItem.GetAll, nil))
-	accountItem.GET("/:subject/:name", RouterFunc(s.accountItem.Get, nil))
-	accountItem.POST("", RouterFunc(s.accountItem.Save, nil))
+	api := e.Group("/api")
+	accountItems := api.Group("/accountitems")
+	accountItems.GET("", RouterFunc(s.accountItem.GetAll, nil))
+	accountItems.GET("/:subject/:name", RouterFunc(s.accountItem.Get, nil))
+	accountItems.POST("", RouterFunc(s.accountItem.Save, nil))
 	e.Start(addr)
 }
