@@ -9,6 +9,10 @@ import (
 
 type context struct{ e echo.Context }
 
+func (ctx context) Bind(i interface{}) error {
+	return ctx.e.Bind(i)
+}
+
 func (ctx context) Text(text string) {
 	ctx.e.String(http.StatusOK, text)
 }

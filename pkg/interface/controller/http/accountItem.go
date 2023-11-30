@@ -9,6 +9,7 @@ import (
 type Context interface {
 	Writer
 	Reader
+	Bind(i interface{}) error
 }
 
 type Writer interface {
@@ -34,14 +35,23 @@ func NewAccountItemController(u usecase.AccountItemUseCase) AccountItemControlle
 	return accountItemController{u}
 }
 
-func (c accountItemController) Get(ctx Context) {
-	subject, name := ctx.PathParam()["subject"], ctx.PathParam()["name"]
+type GetUserInput struct {
+	Subject string `json:"subject" param:"subject"`
+	Name    string `json:"name" param:"name"`
+}
 
-	if name == "" || subject == "" {
+func (c accountItemController) Get(ctx Context) {
+	var u GetUserInput
+	if err := ctx.Bind(&u); err != nil {
+		ctx.Text("bind error")
+		return
+	}
+
+	if u.Subject == "" || u.Name == "" {
 		ctx.Text("please specify only one name, and subject")
 		return
 	}
-	dto, err := c.u.FindByTitle(subject, name)
+	dto, err := c.u.FindByTitle(u.Subject, u.Name)
 	if err != nil {
 		ctx.Text(err.Error())
 		return
